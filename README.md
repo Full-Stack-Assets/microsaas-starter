@@ -23,7 +23,7 @@ archive of it.
 
 ### Generated structure
 
-```
+```text
 microsaas-starter/
 ├── apps/             # Application code (tradequote, inkmanager, invoiceflow)
 ├── packages/         # Shared packages (database schemas per app)
