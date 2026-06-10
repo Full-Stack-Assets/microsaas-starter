@@ -1,0 +1,37 @@
+name: test
+
+on:
+  push:
+  pull_request:
+
+# Cancel superseded runs on the same ref to save CI resources.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Least privilege: these jobs only need to read the repository.
+permissions:
+  contents: read
+
+jobs:
+  shellcheck:
+    name: shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Run shellcheck
+        run: shellcheck generate-monorepo.sh
+
+  bats:
+    name: bats
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Install bats and zip
+        run: sudo apt-get update && sudo apt-get install -y bats zip unzip
+      - name: Run bats tests
+        run: bats test/
