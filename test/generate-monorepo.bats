@@ -28,9 +28,9 @@ teardown() {
 
 @test "creates the expected base directory structure" {
   bash generate-monorepo.sh
-  [ -d microsaas-starter/apps/tradequote ]
-  [ -d microsaas-starter/apps/inkmanager ]
-  [ -d microsaas-starter/apps/invoiceflow ]
+  [ -d microsaas-starter/apps/tradequote/app ]
+  [ -d microsaas-starter/apps/inkmanager/app ]
+  [ -d microsaas-starter/apps/invoiceflow/app ]
   [ -d microsaas-starter/packages/database/tradequote ]
   [ -d microsaas-starter/packages/database/inkmanager ]
   [ -d microsaas-starter/packages/database/invoiceflow ]
@@ -56,6 +56,30 @@ teardown() {
   run python3 -c "import json,sys; print(json.load(open('microsaas-starter/apps/tradequote/package.json'))['name'])"
   [ "$status" -eq 0 ]
   [ "$output" = "tradequote-pro" ]
+}
+
+@test "writes entrypoints for inkmanager and invoiceflow apps" {
+  bash generate-monorepo.sh
+  [ -f microsaas-starter/apps/inkmanager/app/page.tsx ]
+  [ -f microsaas-starter/apps/invoiceflow/app/page.tsx ]
+}
+
+@test "all app package.json files are valid JSON with expected names" {
+  bash generate-monorepo.sh
+  run python3 - <<'PY'
+import json
+expected = {
+    "tradequote": "tradequote-pro",
+    "inkmanager": "inkmanager",
+    "invoiceflow": "invoiceflow",
+}
+for app, name in expected.items():
+    data = json.load(open(f"microsaas-starter/apps/{app}/package.json"))
+    assert data["name"] == name, f"{app}: {data['name']} != {name}"
+print("ok")
+PY
+  [ "$status" -eq 0 ]
+  [ "$output" = "ok" ]
 }
 
 @test "emits deploy script and workflow files" {
