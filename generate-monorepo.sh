@@ -14,6 +14,48 @@ mkdir -p scripts
 mkdir -p .github/workflows
 
 # ----------------------------------------------------------------------
+# scaffold_app <app-dir> <package-name> <display-name>
+# Writes a minimal Next.js package.json and a placeholder landing page for an
+# app. Every app shares the same base stack (Next.js, React, Supabase, Stripe).
+# ----------------------------------------------------------------------
+scaffold_app() {
+  local dir="$1" name="$2" title="$3"
+  mkdir -p "$dir/app"
+  cat > "$dir/package.json" << EOF
+{
+  "name": "$name",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "14.0.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@supabase/supabase-js": "^2.39.0",
+    "@stripe/stripe-js": "^2.2.0",
+    "stripe": "^14.10.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "typescript": "^5",
+    "tailwindcss": "^3",
+    "autoprefixer": "^10",
+    "postcss": "^8"
+  }
+}
+EOF
+  cat > "$dir/app/page.tsx" << EOF
+// $title landing page – replace with full implementation
+export default function Home() { return <div>$title</div> }
+EOF
+}
+
+# ----------------------------------------------------------------------
 # TradeQuote Pro (full app)
 # ----------------------------------------------------------------------
 cat > apps/tradequote/package.json << 'EOF'
@@ -55,7 +97,11 @@ cat > apps/tradequote/app/page.tsx << 'EOF'
 export default function Home() { return <div>TradeQuote Pro – Replace with full code from answer</div> }
 EOF
 
-# Similarly for InkManager and InvoiceFlow (same pattern)
+# ----------------------------------------------------------------------
+# InkManager (inventory tracking) and InvoiceFlow (billing)
+# ----------------------------------------------------------------------
+scaffold_app apps/inkmanager inkmanager "InkManager"
+scaffold_app apps/invoiceflow invoiceflow "InvoiceFlow"
 
 # ----------------------------------------------------------------------
 # Deployment scripts
