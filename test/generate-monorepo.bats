@@ -4,6 +4,8 @@
 # These tests run the generator inside an isolated temporary directory so they
 # never touch the repository working tree. Run with: bats test/
 
+# Per-test fixture: copies the script under test into a fresh temporary
+# directory and cd's into it so generation never touches the repo tree.
 setup() {
   # Absolute path to the script under test (resolved before we change dirs).
   SCRIPT="${BATS_TEST_DIRNAME}/../generate-monorepo.sh"
@@ -13,6 +15,7 @@ setup() {
   cd "$WORKDIR"
 }
 
+# Per-test cleanup: leaves the temporary working directory and removes it.
 teardown() {
   cd /
   rm -rf "$WORKDIR"
