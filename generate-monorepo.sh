@@ -8,7 +8,7 @@ mkdir -p "$PROJECT_NAME"
 cd "$PROJECT_NAME"
 
 # Create base monorepo structure
-mkdir -p apps/tradequote apps/inkmanager apps/invoiceflow
+mkdir -p apps/tradequote/app apps/inkmanager apps/invoiceflow
 mkdir -p packages/database/tradequote packages/database/inkmanager packages/database/invoiceflow
 mkdir -p scripts
 mkdir -p .github/workflows
